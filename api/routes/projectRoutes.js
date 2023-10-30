@@ -1,5 +1,6 @@
 const express = require("express");
 const Project = require("../models/Project.js");
+const Task = require("../models/Task.js");
 const { error500 } = require("../helpers/errorHandling.js");
 
 const projectRouter = express.Router();
@@ -99,6 +100,13 @@ projectRouter.delete("/project/:id", async (req, res) => {
 
   if (username !== project.username) {
     res.status(403).json({ error: "Operação não permitida." });
+    return;
+  }
+
+  try {
+    await Task.deleteMany({ project_id: id });
+  } catch (error) {
+    error500(error, res);
     return;
   }
 
